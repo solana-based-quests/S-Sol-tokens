@@ -7,7 +7,7 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 // Store
 import useUserSOLBalanceStore from "../../stores/useUserSOLBalanceStore";
 
-import { CreateMintForm } from "components/fungible/FungibleTokenMint";
+import { CreateFungileMint } from "components/fungible/FungibleTokenMint";
 
 import { TransferToken } from "components/fungible/TransfertoOtherWallet";
 
@@ -38,7 +38,7 @@ export const FungibleView: FC = ({ }) => {
         <div className="md:px-32 px-4 mx-auto py-12 max-w-7xl">
             <div className="md:px-16 px-4 pt-4 flex flex-col items-start gap-y-16">
                 <div className="flex flex-col gap-16 w-full items-center">
-                    <CreateMintForm />
+                    <CreateFungileMint />
                     <div className="bg-white border-white bg-blur bg-opacity-30 rounded-lg p-8 lg:w-1/2 w-full">
                          {/* <CreateTokenAccountForm />  */}
                     </div>
