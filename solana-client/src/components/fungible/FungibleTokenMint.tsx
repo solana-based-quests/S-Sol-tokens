@@ -3,7 +3,7 @@ import { useState } from "react";
 import { getMint } from "@solana/spl-token";
 
 import * as anchor from "@coral-xyz/anchor";
-import { Program, Idl, AnchorProvider, BN, utils, web3 } from "@coral-xyz/anchor";
+import { Program, Idl, AnchorProvider } from "@coral-xyz/anchor";
 import { Metaplex } from "@metaplex-foundation/js";
 
 import idl from "../../../idl.json";
@@ -12,7 +12,7 @@ import { notify } from "utils/notifications";
 import { CopyIcon, LinkIcon, Loader } from "../Icons";
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { findMasterEditionPda, findMetadataPda, mplTokenMetadata, MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 
 
 const programId = new PublicKey(idl.metadata.address);
@@ -21,7 +21,7 @@ const opts: { preflightCommitment: Commitment } = {
     preflightCommitment: "processed",
 };
 
-export const CreateMintForm = () => {
+export const CreateFungileMint = () => {
     const [txSig, setTxSig] = useState("");
     const [mint, setMint] = useState("");
 
@@ -29,7 +29,7 @@ export const CreateMintForm = () => {
 
     const { connection } = useConnection();
     const wallet = useWallet();
-    const { publicKey, sendTransaction } = useWallet();
+    const { publicKey } = useWallet();
 
     const link = () => {
         return txSig ? `https://explorer.solana.com/tx/${txSig}?cluster=devnet` : "";
@@ -37,7 +37,6 @@ export const CreateMintForm = () => {
 
     const getProgram = () => {
         /* create the provider and return it to the caller */
-
         const provider = new AnchorProvider(connection, wallet as any, opts);
         /* create the program interface combining the idl, program ID, and provider */
         const program = new Program(idl as Idl, programId, provider);
@@ -45,7 +44,6 @@ export const CreateMintForm = () => {
     };
 
     const program = getProgram();
-
     const mintKeypair = anchor.web3.Keypair.generate();
 
     const tokenTitle = "logo Token";
@@ -62,20 +60,11 @@ export const CreateMintForm = () => {
             console.log("error", `Send Transaction: Wallet not connected!`);
             return;
         }
-
-        // const createDataAccountTransaction = await program.methods
-        //     .new()
-        //     .accounts({ dataAccount: dataAccount.publicKey })
-        //     .signers([dataAccount])
-        //     .rpc();
-        // console.log("Your transaction signature", createDataAccountTransaction);
-        // console.log("Your transaction dataAccount", dataAccount.publicKey.toBase58());
-
         // creating metadata address
         const metaplex = Metaplex.make(connection);
         const metadataAddress = await metaplex.nfts().pdas().metadata({ mint: mintKeypair.publicKey });
 
-        const associatedTokenAccount = wallet.publicKey !== null &&  getAssociatedTokenAddressSync(
+        const associatedTokenAccount = wallet.publicKey !== null && getAssociatedTokenAddressSync(
             mintKeypair.publicKey,
             wallet.publicKey
         );
