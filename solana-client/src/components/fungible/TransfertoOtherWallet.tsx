@@ -2,13 +2,10 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as web3 from "@solana/web3.js";
 import { FC, useState } from "react";
 import {
-    createMintToInstruction,
     getAssociatedTokenAddress,
     TOKEN_PROGRAM_ID,
     ASSOCIATED_TOKEN_PROGRAM_ID,
     getAccount,
-    getOrCreateAssociatedTokenAccount,
-    createTransferInstruction,
     createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
 
@@ -30,7 +27,6 @@ export const TransferToken: FC = () => {
     const [tokenAccount, setTokenAccount] = useState("");
     const [balance, setBalance] = useState("");
     const [loading, setLoading] = useState(false);
-
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const wallet = useWallet();
@@ -49,7 +45,7 @@ export const TransferToken: FC = () => {
 
     const program = getProgram();
 
-    const mintTo = async (event) => {
+    const transferfungible = async (event) => {
         event.preventDefault();
         setLoading(true);
         if (!connection || !publicKey) {
@@ -106,9 +102,7 @@ export const TransferToken: FC = () => {
             .instruction();
 
         transaction.add(transferTx);
-
         const signature = await sendTransaction(transaction, connection);
-
         await connection.confirmTransaction(signature, "confirmed");
 
         setTxSig(signature);
@@ -122,7 +116,7 @@ export const TransferToken: FC = () => {
     return (
         <div>
             {publicKey ? (
-                <form onSubmit={mintTo} className="flex flex-col gap-y-8">
+                <form onSubmit={transferfungible} className="flex flex-col gap-y-8">
                     <div className="flex flex-col gap-y-2">
                         <label htmlFor="mint" className="text-xl">
                             Token Mint:
@@ -171,3 +165,4 @@ export const TransferToken: FC = () => {
         </div>
     );
 };
+
