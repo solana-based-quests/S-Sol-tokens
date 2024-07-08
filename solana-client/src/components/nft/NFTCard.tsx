@@ -12,26 +12,11 @@ import {
     createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
 import { AnchorProvider, Idl, Program } from "@coral-xyz/anchor";
-import { Commitment, PublicKey, Connection, Keypair, Transaction } from "@solana/web3.js";
+import { Commitment, PublicKey, Keypair, Transaction } from "@solana/web3.js";
 import { notify } from "utils/notifications";
-import { Nft, Sft, Metaplex } from "@metaplex-foundation/js";
-import { set } from "date-fns";
+import { Nft, Sft } from "@metaplex-foundation/js";
 import { LinkIcon, Loader } from "components/Icons";
 import { BN } from "bn.js";
-import { MintNFTButton } from "components/MintNFTButton";
-
-
-/* eslint-disable @next/next/no-img-element */
-
-
-
-
-
-
-
-
-
-
 
 
 const opts: { preflightCommitment: Commitment } = {
@@ -40,24 +25,23 @@ const opts: { preflightCommitment: Commitment } = {
 
 const programId = new PublicKey(idl.metadata.address);
 
-export const NFTCard = ({ mint, nftDetails, ifNftTransfered, setifNftTransfered }: { mint: Keypair; nftDetails: Sft | Nft; ifNftTransfered:boolean; setifNftTransfered:any;  }) => {
+export const NFTCard = ({ mint, nftDetails, ifNftTransfered, setifNftTransfered }: { mint: Keypair; nftDetails: Sft | Nft; ifNftTransfered: boolean; setifNftTransfered: any; }) => {
     console.log("nft details", nftDetails)
     const [buyer, setBuyer] = useState("");
     const [loading, setLoading] = useState(false);
     const [txSig, setTxSig] = useState<string | null>(null);
 
     const { connection } = useConnection();
-
     const wallet = useWallet();
 
     const { publicKey, sendTransaction } = useWallet();
 
-    useEffect(()=>{
-        if(txSig){
+    useEffect(() => {
+        if (txSig) {
             setifNftTransfered(true);
         }
 
-    },[txSig])
+    }, [txSig])
 
     const link = () => {
         return txSig ? `https://explorer.solana.com/tx/${txSig}?cluster=devnet` : "";
@@ -110,26 +94,23 @@ export const NFTCard = ({ mint, nftDetails, ifNftTransfered, setifNftTransfered 
                         ASSOCIATED_TOKEN_PROGRAM_ID
                     )
                 );
-                // transaction.add(instruction);
                 transaction.feePayer = wallet.publicKey;
-
                 const tx1 = await sendTransaction(transaction, connection);
+                console.log("tx1", tx1)
             }
 
             const tx = await program.methods
                 .transferTokens(new BN(1))
                 .accounts({
                     from: publicKey,
-					fromAta: sellerTokenAccount,
-					toAta: buyerTokenAccount,
-					tokenProgram: TOKEN_PROGRAM_ID
+                    fromAta: sellerTokenAccount,
+                    toAta: buyerTokenAccount,
+                    tokenProgram: TOKEN_PROGRAM_ID
                 })
                 .rpc({ skipPreflight: true });
 
             setTxSig(tx);
-
-            const buyerTokenAccountAmount = (await getAccount(connection, buyerTokenAccount)).amount;
-
+            // const buyerTokenAccountAmount = (await getAccount(connection, buyerTokenAccount)).amount;
             notify({ message: "NFT Transferred" });
         } catch (err) {
             console.log(err);
@@ -140,7 +121,7 @@ export const NFTCard = ({ mint, nftDetails, ifNftTransfered, setifNftTransfered 
 
     return (
         <div>
-            {ifNftTransfered?<div>YOu need to mint an NFt</div>:<div className="card bg-white border-white bg-blur bg-opacity-30 rounded-lg ">
+            {ifNftTransfered ? <div>YOu need to mint an NFt</div> : <div className="card bg-white border-white bg-blur bg-opacity-30 rounded-lg ">
                 <img className="max-h-80 w-auto" alt="nft img" src={nftDetails.json.image} />
                 <div className="p-4 pt-4 flex flex-col gap-y-4">
                     <div className="font-bold text-lg ">{nftDetails.json.symbol}</div>
@@ -162,7 +143,7 @@ export const NFTCard = ({ mint, nftDetails, ifNftTransfered, setifNftTransfered 
                     )}
                 </div>
             </div>}
-            
+
             {txSig ? (
                 <div className="flex flex-col gap-y-2 mt-4">
                     <p>
@@ -190,3 +171,4 @@ export const NFTCard = ({ mint, nftDetails, ifNftTransfered, setifNftTransfered 
         </div>
     );
 };
+
