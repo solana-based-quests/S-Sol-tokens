@@ -9,4 +9,4 @@ This repo contains learning content about Solana token-related features and func
 
 This quest is designed to introduce you to building on Solana. We provide complete code samples that you can modify, copy, and run directly on your machine. 
 
-Learn more about [here](https://solquest.tech/challenge/intro-to-spl-token)
+Learn more about [here](https://www.solanaquest.fun/challenge/intro-to-spl-token)
